@@ -70,7 +70,6 @@ interface BlockModel {
 	content: string
 	id: string
 	type: BlockType
-	focused?: boolean
 }
 
 const initialBlocks: BlockModel[] = [
@@ -83,6 +82,9 @@ const initialBlocks: BlockModel[] = [
 
 const NoteTab = () => {
 	const [blocks, setBlocks] = useState<BlockModel[]>(initialBlocks)
+
+	const currentBlockRef = useRef<HTMLElement | null>(null)
+
 	const handleBlockContentUpdate = (content: string, id: string) => {
 		const newBlocks = blocks.map((block) => {
 			if (block.id === id) {
@@ -106,9 +108,9 @@ const NoteTab = () => {
 				content: '',
 				id: generateId(),
 				type: 'p',
-				focused: true,
 			}
 			setBlocks([...blocks, newBlock])
+			currentBlockRef.current = ref
 		}
 	}
 
@@ -116,6 +118,20 @@ const NoteTab = () => {
 		const newBlocks = blocks.filter((block) => block.id !== id)
 		setBlocks(newBlocks)
 	}
+
+	useEffect(() => {
+		if (currentBlockRef.current) {
+			console.log(currentBlockRef.current)
+
+			currentBlockRef.current.focus()
+			const nextSibling = currentBlockRef.current
+				.nextElementSibling as HTMLElement
+			if (nextSibling) {
+				nextSibling.focus()
+			}
+			currentBlockRef.current = null
+		}
+	}, [currentBlockRef.current])
 
 	return (
 		<div className='flex-1 h-full p-4'>
@@ -153,11 +169,10 @@ const BlockEditable = (props: {
 	const onKeyDown = useRefCallback((evt) => {
 		if (evt.key === 'Enter') {
 			evt.preventDefault()
-			console.log('Enter')
-
 			props.addNewBlock(props.block, props.index, ref.current!)
 		} else if (evt.key === 'Backspace') {
 			if (props.block.content === '') {
+				evt.preventDefault()
 				props.deleteBlock(props.block.id)
 			}
 		}

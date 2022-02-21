@@ -1,9 +1,4 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
-import ContentEditable from 'react-contenteditable'
-import { AiOutlineFolderAdd } from 'react-icons/ai'
 import NoteTabEditable from '../components/NoteTabEditable'
-import { generateId } from '../utils'
-import { useRefCallback } from '../utils/hooks'
 
 // notes folder name example
 const folders = [

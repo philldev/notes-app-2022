@@ -1,6 +1,7 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import ContentEditable from 'react-contenteditable'
 import { AiOutlineFolderAdd } from 'react-icons/ai'
+import NoteTabEditable from '../components/NoteTabEditable'
 import { generateId } from '../utils'
 import { useRefCallback } from '../utils/hooks'
 
@@ -58,136 +59,9 @@ const Main = () => {
 						))}
 					</div>
 				</div>
-				<NoteTab />
+				<NoteTabEditable />
 			</div>
 		</div>
-	)
-}
-
-type BlockType = 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-
-interface BlockModel {
-	content: string
-	id: string
-	type: BlockType
-}
-
-const initialBlocks: BlockModel[] = [
-	{
-		content: 'Type your note here',
-		id: '1',
-		type: 'p',
-	},
-]
-
-const NoteTab = () => {
-	const [blocks, setBlocks] = useState<BlockModel[]>(initialBlocks)
-
-	const currentBlockRef = useRef<HTMLElement | null>(null)
-
-	const handleBlockContentUpdate = (content: string, id: string) => {
-		const newBlocks = blocks.map((block) => {
-			if (block.id === id) {
-				return {
-					...block,
-					content,
-				}
-			}
-			return block
-		})
-		setBlocks(newBlocks)
-	}
-	const handleAddBlock = (
-		currBlock: BlockModel,
-		index: number,
-		ref: HTMLElement
-	) => {
-		const isLastBlock = index === blocks.length - 1
-		if (isLastBlock) {
-			const newBlock: BlockModel = {
-				content: '',
-				id: generateId(),
-				type: 'p',
-			}
-			setBlocks([...blocks, newBlock])
-			currentBlockRef.current = ref
-		}
-	}
-
-	const handleDeleteBlock = (id: string) => {
-		const newBlocks = blocks.filter((block) => block.id !== id)
-		setBlocks(newBlocks)
-	}
-
-	useEffect(() => {
-		if (currentBlockRef.current) {
-			console.log(currentBlockRef.current)
-
-			currentBlockRef.current.focus()
-			const nextSibling = currentBlockRef.current
-				.nextElementSibling as HTMLElement
-			if (nextSibling) {
-				nextSibling.focus()
-			}
-			currentBlockRef.current = null
-		}
-	}, [currentBlockRef.current])
-
-	return (
-		<div className='flex-1 h-full p-4'>
-			{blocks.map((block, index) => (
-				<BlockEditable
-					key={index}
-					index={index}
-					block={block}
-					onContentUpdate={handleBlockContentUpdate}
-					addNewBlock={handleAddBlock}
-					deleteBlock={handleDeleteBlock}
-				/>
-			))}
-		</div>
-	)
-}
-
-const BlockEditable = (props: {
-	block: BlockModel
-	index: number
-	onContentUpdate: (content: string, id: string) => void
-	addNewBlock: (currBlock: BlockModel, index: number, ref: HTMLElement) => void
-	deleteBlock: (id: string) => void
-}) => {
-	const ref = useRef<HTMLElement | null>(null)
-
-	const handleChange = useRefCallback((evt) => {
-		props.onContentUpdate(evt.target.value, props.block.id)
-	}, [])
-
-	// const handleBlur = useRefCallback(() => {
-	// 	props.onBlur()
-	// }, [props.block.content])
-
-	const onKeyDown = useRefCallback((evt) => {
-		if (evt.key === 'Enter') {
-			evt.preventDefault()
-			props.addNewBlock(props.block, props.index, ref.current!)
-		} else if (evt.key === 'Backspace') {
-			if (props.block.content === '') {
-				evt.preventDefault()
-				props.deleteBlock(props.block.id)
-			}
-		}
-	}, [])
-
-	return (
-		<ContentEditable
-			innerRef={ref}
-			className='w-full p-4'
-			html={props.block.content}
-			onChange={handleChange}
-			// onBlur={handleBlur}
-			tagName={props.block.type}
-			onKeyDown={onKeyDown}
-		/>
 	)
 }
 

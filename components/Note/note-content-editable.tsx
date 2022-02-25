@@ -1,4 +1,5 @@
 import { Component, createRef, RefObject } from 'react'
+import sanitizeHtml from 'sanitize-html'
 import ContentEditable from 'react-contenteditable'
 
 interface Props {
@@ -30,18 +31,29 @@ export class NoteContentEditable extends Component<Props, State> {
 	}
 
 	handleChange = (event: any) => {
+		console.log(event.target.value)
+
+		const clean = sanitizeHtml(event.target.value, {
+			allowedTags: ['div', 'br'],
+		})
 		this.setState({
-			html: event.target.value,
+			html: clean,
 		})
 	}
 
 	render() {
 		return (
-			<ContentEditable
-				innerRef={this.contentEditable}
-				html={this.state.html}
-				onChange={this.handleChange}
-			/>
+			<div className='relative'>
+				{this.state.html.length === 0 && (
+					<p className='absolute left-0 text-slate-400'>Type something</p>
+				)}
+				<ContentEditable
+					className='relative z-10 focus:outline-none'
+					innerRef={this.contentEditable}
+					html={this.state.html}
+					onChange={this.handleChange}
+				/>
+			</div>
 		)
 	}
 }

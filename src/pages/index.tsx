@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FiEdit } from 'react-icons/fi';
 
 import Layout from '@/components/layout/Layout';
-import NoteList from '@/components/note-list/note-list';
+import NoteList from '@/components/note-list';
 import Seo from '@/components/Seo';
 
 export default function HomePage() {

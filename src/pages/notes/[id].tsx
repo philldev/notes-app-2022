@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FiArchive, FiArrowLeft, FiTrash } from 'react-icons/fi';
 
 import Layout from '@/components/layout/Layout';
-import NoteDetail from '@/components/note-detail/note-detail';
+import NoteDetail from '@/components/NoteDetail';
 import Seo from '@/components/Seo';
 
 export default function Note() {

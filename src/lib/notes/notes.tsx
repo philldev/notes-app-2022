@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Note } from './notes-types';
+import { uuid } from '../helper';
 
 const LOCAL_STORAGE_KEY = 'notes-app__data';
 
@@ -114,4 +115,21 @@ export const useNotes = () => {
     throw new Error('useNotes must be used within a NotesProvider');
   }
   return context;
+};
+
+export const createEmptyNote = (): Note => ({
+  id: uuid(),
+  title: 'Untitled',
+  content: '',
+});
+
+export const getNoteById = (id: string): Note | undefined => {
+  const ls = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (ls) {
+    const notes = JSON.parse(ls) as Note[] | undefined;
+    if (notes) {
+      return notes.find((note) => note.id === id);
+    }
+    return undefined;
+  }
 };

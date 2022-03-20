@@ -37,7 +37,7 @@ export default function NotePage() {
   return (
     <Layout>
       <Seo templateTitle='Note Title' />
-      <main className='p-2'>
+      <main className='p-4'>
         <div className='mb-2 flex items-center justify-between'>
           <div>
             <Link href='/' passHref>

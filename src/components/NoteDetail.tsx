@@ -40,6 +40,7 @@ const NoteDetail: FC<NoteDetailProps> = (props) => {
       <div>
         <TextareaAutosize
           value={content}
+          placeholder='Enter your note here...'
           onChange={(e) => setContent(e.target.value)}
           className='w-full resize-none border-none bg-transparent p-0 focus:ring-0'
         />

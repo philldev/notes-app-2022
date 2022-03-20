@@ -22,9 +22,9 @@ export default function HomePage() {
   return (
     <Layout>
       <Seo />
-      <main>
-        <div className='flex items-center justify-between p-2'>
-          <h1 className='font-md text-base font-normal uppercase'>Notes</h1>
+      <main className='p-4'>
+        <div className='mb-2 flex items-center justify-between'>
+          <h1 className='font-md text-2xl font-normal uppercase'>Notes</h1>
           <div className=''>
             <button
               onClick={onAddNoteClick}

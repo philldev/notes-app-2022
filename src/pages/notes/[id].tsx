@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-import { FiArchive, FiArrowLeft, FiTrash } from 'react-icons/fi';
+import { FiArrowLeft, FiTrash } from 'react-icons/fi';
+import { MdOutlineArchive, MdOutlineUnarchive } from 'react-icons/md';
+import useSWR, { mutate } from 'swr';
 
-import { getNoteById, useNotes } from '@/lib/notes/notes';
-import { Note } from '@/lib/notes/notes-types';
+import { deleteNote, getNoteById, updateNote } from '@/lib/notes/notes';
 
 import Layout from '@/components/layout/Layout';
 import NoteDetail from '@/components/NoteDetail';
@@ -12,27 +13,25 @@ import Seo from '@/components/Seo';
 
 export default function NotePage() {
   const router = useRouter();
-  const { removeNote } = useNotes();
+  const routerRef = React.useRef<typeof router>(router);
 
-  const [note, setNote] = React.useState<Note | null>();
+  const { data: note } = useSWR(`note/${router.query.id}`, async () => {
+    const note = await getNoteById(router.query.id as string);
+    if (note) {
+      return note;
+    } else {
+      routerRef.current.push('/notes');
+    }
+  });
 
   const onDeleteClick = () => {
-    if (note) removeNote(note.id);
+    if (note) deleteNote(note.id);
     router.push('/');
   };
 
-  const routerRef = React.useRef<typeof router>(router);
-
-  React.useEffect(() => {
-    const fetchNote = async () => {
-      const note = getNoteById(router.query.id as string);
-      if (note) setNote(note);
-      else routerRef.current.push('/');
-    };
-    fetchNote();
-  }, [router.query.id]);
-
-  if (!note) return null;
+  if (!note) {
+    return null;
+  }
 
   return (
     <Layout>
@@ -47,9 +46,28 @@ export default function NotePage() {
             </Link>
           </div>
           <div className='flex items-center'>
-            <button className='flex h-10 w-10 items-center justify-center'>
-              <FiArchive className='h-4 w-4' />
-            </button>
+            {!note.archived && (
+              <button
+                onClick={() => {
+                  updateNote({ ...note, archived: true });
+                  mutate('note/' + note.id);
+                }}
+                className='flex h-10 w-10 items-center justify-center'
+              >
+                <MdOutlineArchive className='h-5 w-5' />
+              </button>
+            )}
+            {note.archived && (
+              <button
+                onClick={() => {
+                  updateNote({ ...note, archived: false });
+                  mutate('note/' + note.id);
+                }}
+                className='flex h-10 w-10 items-center justify-center'
+              >
+                <MdOutlineUnarchive className='h-5 w-5' />
+              </button>
+            )}
             <button
               onClick={onDeleteClick}
               className='flex h-10 w-10 items-center justify-center'

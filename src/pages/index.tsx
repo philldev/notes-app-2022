@@ -1,21 +1,26 @@
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { FiEdit } from 'react-icons/fi';
+import useSWR, { mutate } from 'swr';
 
-import { createEmptyNote, useNotes } from '@/lib/notes/notes';
+import { today } from '@/lib/helper';
+import { addNote, createEmptyNote, getNotes } from '@/lib/notes/notes';
 
 import Layout from '@/components/layout/Layout';
 import NoteList from '@/components/NoteList';
 import Seo from '@/components/Seo';
 
 export default function HomePage() {
-  const { notes, addNote } = useNotes();
+  const { data: notes } = useSWR('notes', () => {
+    return getNotes();
+  });
 
   const router = useRouter();
 
-  const onAddNoteClick = () => {
+  const onAddNoteClick = async () => {
     const note = createEmptyNote();
-    addNote(note);
+    await addNote(note);
+    mutate('notes');
     router.push(`/notes/${note.id}`);
   };
 
@@ -24,7 +29,7 @@ export default function HomePage() {
       <Seo />
       <main className='p-4'>
         <div className='mb-2 flex items-center justify-between'>
-          <h1 className='font-md text-2xl font-normal uppercase'>Notes</h1>
+          <span className='text-slate-500'>{today()}</span>
           <div className=''>
             <button
               onClick={onAddNoteClick}
@@ -34,7 +39,9 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        <NoteList notes={notes} />
+        {notes && notes.length > 0 && (
+          <NoteList notes={notes.filter((i) => !i.archived)} />
+        )}
       </main>
     </Layout>
   );

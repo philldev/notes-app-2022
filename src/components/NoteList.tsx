@@ -13,8 +13,12 @@ const NoteList: FC<NoteListProps> = (props) => {
       {props.notes.map((note) => (
         <Link key={note.id} passHref href={`/notes/${note.id}`}>
           <div className='rounded-md border border-slate-200 bg-slate-50 p-2 text-left shadow-sm'>
-            <h3 className='mb-1 font-normal'>{note.title}</h3>
-            <p className='text-slate-600'>{note.content.substring(0, 50)}</p>
+            <h3 className='mb-1 text-base font-normal text-slate-700'>
+              {note.title}
+            </h3>
+            <p className='text-sm text-slate-600'>
+              {note.content.substring(0, 50)}
+            </p>
           </div>
         </Link>
       ))}

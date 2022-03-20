@@ -34,3 +34,15 @@ export function uuid(): string {
     return v.toString(16);
   });
 }
+
+// get todays date in dddd mm  format
+export function today(): string {
+  const today = new Date();
+
+  return `${today.toLocaleString('default', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  })}`;
+}

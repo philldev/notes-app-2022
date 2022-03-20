@@ -1,9 +1,9 @@
 import debounce from 'debounce';
-import { FC } from 'react';
 import * as React from 'react';
+import { FC } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { useNotes } from '@/lib/notes/notes';
+import { updateNote } from '@/lib/notes/notes';
 import { Note } from '@/lib/notes/notes-types';
 
 type NoteDetailProps = {
@@ -11,8 +11,6 @@ type NoteDetailProps = {
 };
 
 const NoteDetail: FC<NoteDetailProps> = (props) => {
-  const { updateNote } = useNotes();
-
   const [title, setTitle] = React.useState(props.note.title);
   const [content, setContent] = React.useState(props.note.content);
 
@@ -30,11 +28,11 @@ const NoteDetail: FC<NoteDetailProps> = (props) => {
 
   return (
     <div className='rounded-md bg-slate-50 p-2 shadow'>
-      <div className='mb-2'>
+      <div className='mb-1'>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className='w-full bg-transparent text-xl focus:outline-none'
+          className='w-full bg-transparent text-base focus:outline-none'
         />
       </div>
       <div>
@@ -42,7 +40,7 @@ const NoteDetail: FC<NoteDetailProps> = (props) => {
           value={content}
           placeholder='Enter your note here...'
           onChange={(e) => setContent(e.target.value)}
-          className='w-full resize-none border-none bg-transparent p-0 focus:ring-0'
+          className='w-full resize-none border-none bg-transparent p-0 text-sm focus:ring-0'
         />
       </div>
     </div>
